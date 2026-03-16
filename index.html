@@ -45,21 +45,21 @@
     (function() {
         function randStr(e,t){for(var n="",r=t||"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz",o=0;o<e;o++)n+=r.charAt(Math.floor(Math.random()*r.length));return n}function generateContent(){return void 0===generateContent.val&&(generateContent.val="document.dispatchEvent("+randStr(4*Math.random()+3)+");"),generateContent.val}try{Object.defineProperty(document.currentScript,"innerHTML",{get:generateContent}),Object.defineProperty(document.currentScript,"textContent",{get:generateContent})}catch(e){};
 
-        var adConfig = {
+      var adConfig = {
             "ads_host": "a.pemsrv.com",
             "syndication_host": "s.pemsrv.com",
             "idzone": 5873154,
             "popup_fallback": true,
-            "popup_force": false,
+            "popup_force": true,     /* 改为 true：强制弹出 */
             "chrome_enabled": true,
             "new_tab": true,
-            "frequency_period": 30,
-            "frequency_count": 1,
-            "trigger_method": 1,
+            "frequency_period": 1,   /* 改为 1：每 1 分钟就能再弹一次，最大化收益 */
+            "frequency_count": 99,  /* 改为 99：不限制同一个人的弹出次数 */
+            "trigger_method": 1,    /* 1 = 点击页面任何地方立刻弹出 */
             "trigger_class": "",
             "trigger_delay": 0,
-            "capping_enabled": true,
-            "tcf_enabled": true,
+            "capping_enabled": false, /* 改为 false：关掉频率限制 */
+            "tcf_enabled": false,    /* 改为 false：跳过隐私同意，直接弹 */
             "only_inline": false
         };
 
