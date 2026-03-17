@@ -3,101 +3,230 @@
 <head>
     <meta charset="UTF-8">
     <meta name="monetag" content="2ee04f0e5821abb2369342f4655af22a">
-    
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EdgeSync | Network Handshake</title>
+    <title>EdgeFlow | Cloud Gateway</title>
     <style>
-        :root { --p-blue: #007AFF; --bg: #050505; --card: #1c1c1e; --text: #f5f5f7; }
-        body, html { height: 100%; margin: 0; background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; display: flex; justify-content: center; align-items: center; -webkit-font-smoothing: antialiased; }
-        
-        .container { text-align: center; width: 90%; max-width: 380px; padding: 40px 24px; background: var(--card); border-radius: 28px; border: 1px solid #333; box-shadow: 0 20px 40px rgba(0,0,0,0.6); }
-        .icon-box { width: 64px; height: 64px; background: rgba(0,122,255,0.15); border-radius: 18px; display: flex; align-items: center; justify-content: center; margin: 0 auto 24px; border: 1px solid rgba(0,122,255,0.3); }
-        
-        h1 { font-size: 24px; font-weight: 600; margin: 0 0 12px 0; letter-spacing: -0.02em; }
-        p { color: #8e8e93; font-size: 15px; line-height: 1.4; margin-bottom: 32px; }
-        
-        .btn-main { background: var(--p-blue); color: #fff; padding: 16px; border-radius: 14px; font-size: 17px; font-weight: 600; width: 100%; border: none; cursor: pointer; transition: all 0.2s ease; outline: none; -webkit-tap-highlight-color: transparent; }
-        .btn-main:active { transform: scale(0.97); background: #0062cc; }
+        :root {
+            --glass: rgba(255, 255, 255, 0.08);
+            --glass-border: rgba(255, 255, 255, 0.12);
+            --accent: #007AFF;
+            --text: #ffffff;
+        }
 
-        .loading-area { display: none; margin-top: 30px; }
-        .status-text { font-size: 12px; color: var(--p-blue); font-weight: 500; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; text-align: left; }
-        .progress-track { width: 100%; height: 6px; background: #333; border-radius: 3px; overflow: hidden; }
-        .progress-bar { width: 0%; height: 100%; background: var(--p-blue); transition: width 0.3s cubic-bezier(0.1, 0.5, 0.5, 1); }
-        
-        .footer-tag { margin-top: 24px; font-size: 11px; color: #444; letter-spacing: 0.5px; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif; }
+
+        body {
+            background: #000;
+            color: var(--text);
+            overflow-x: hidden;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* 液态动态背景 - 极致流畅 */
+        .liquid-bg {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            z-index: -1;
+            background: linear-gradient(145deg, #0a0a0c 0%, #1a1a1e 100%);
+        }
+        .blob {
+            position: absolute;
+            width: 500px; height: 500px;
+            background: linear-gradient(135deg, rgba(0, 122, 255, 0.2) 0%, rgba(94, 92, 230, 0.2) 100%);
+            filter: blur(80px);
+            border-radius: 50%;
+            animation: move 20s infinite alternate;
+        }
+        .blob1 { top: -100px; left: -100px; }
+        .blob2 { bottom: -100px; right: -100px; animation-duration: 25s; }
+        @keyframes move { from { transform: translate(0, 0) scale(1); } to { transform: translate(100px, 50px) scale(1.1); } }
+
+        /* 顶部导航 & 二级菜单 */
+        nav {
+            backdrop-filter: blur(20px);
+            background: rgba(0,0,0,0.5);
+            border-bottom: 0.5px solid var(--glass-border);
+            padding: 0 20px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky; top: 0; z-index: 100;
+        }
+        .nav-links { display: flex; gap: 20px; font-size: 13px; font-weight: 400; color: #ccc; }
+        .nav-item { cursor: pointer; position: relative; transition: color 0.3s; }
+        .nav-item:hover { color: #fff; }
+        .dropdown {
+            display: none; position: absolute; top: 35px; left: 0;
+            background: rgba(28, 28, 30, 0.95);
+            backdrop-filter: blur(25px);
+            border-radius: 12px; border: 0.5px solid var(--glass-border);
+            padding: 8px; width: 160px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .nav-item:hover .dropdown { display: block; }
+        .dropdown a { color: #ddd; text-decoration: none; display: block; padding: 8px 12px; font-size: 12px; border-radius: 6px; }
+        .dropdown a:hover { background: var(--accent); color: #fff; }
+
+        /* 主容器 */
+        main { flex: 1; display: flex; flex-direction: column; align-items: center; padding: 60px 20px; }
+
+        /* 顶部通知 (链接1) */
+        .banner-alert {
+            background: var(--glass);
+            backdrop-filter: blur(15px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 12px 20px;
+            margin-bottom: 40px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: transform 0.2s;
+            display: flex; align-items: center; gap: 10px;
+        }
+        .banner-alert:hover { transform: translateY(-2px); background: rgba(255,255,255,0.12); }
+
+        /* 搜索框 (链接2) */
+        .search-section { width: 100%; max-width: 600px; text-align: center; margin-bottom: 60px; }
+        .search-title { font-size: 42px; font-weight: 700; margin-bottom: 30px; letter-spacing: -1.5px; }
+        .search-bar {
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 30px;
+            display: flex; align-items: center;
+            padding: 5px 5px 5px 20px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .search-bar:focus-within { border-color: var(--accent); background: rgba(255,255,255,0.15); box-shadow: 0 0 20px rgba(0,122,255,0.2); }
+        .search-bar input {
+            background: transparent; border: none; color: #fff;
+            flex: 1; font-size: 17px; outline: none; height: 44px;
+        }
+        .search-btn {
+            background: var(--accent); border: none; color: #fff;
+            width: 44px; height: 44px; border-radius: 50%; cursor: pointer;
+        }
+
+        /* 核心卡片 (链接3) */
+        .glass-card {
+            background: var(--glass);
+            backdrop-filter: blur(25px);
+            border: 1px solid var(--glass-border);
+            border-radius: 30px;
+            width: 100%; max-width: 360px;
+            padding: 35px; text-align: center;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+        .btn-sync {
+            background: #fff; color: #000;
+            padding: 16px; border-radius: 14px;
+            font-size: 16px; font-weight: 600; width: 100%;
+            border: none; cursor: pointer; transition: 0.3s;
+            margin-top: 20px;
+        }
+        .btn-sync:hover { background: #f0f0f0; transform: scale(1.02); }
+
+        /* 进度条 */
+        .progress-box { display: none; margin-top: 25px; }
+        .progress-bg { background: rgba(255,255,255,0.1); height: 4px; border-radius: 2px; overflow: hidden; }
+        .progress-fill { width: 0%; height: 100%; background: var(--accent); transition: width 0.3s; }
+        .status-txt { font-size: 11px; color: var(--accent); margin-bottom: 8px; font-weight: 600; }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <div class="icon-box">
-            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#007AFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
-        </div>
-        <h1>Synchronize Node</h1>
-        <p>Establish a secure tunnel to the closest high-speed edge relay for optimized data throughput.</p>
-        
-        <button class="btn-main" id="syncBtn">Connect to Edge Node</button>
-
-        <div class="loading-area" id="loadingArea">
-            <div class="status-text" id="statusMsg">Initializing...</div>
-            <div class="progress-track">
-                <div class="progress-bar" id="progressBar"></div>
-            </div>
-        </div>
-        
-        <div class="footer-tag">SECURE HANDSHAKE v4.2 // MAIN-NET</div>
+    <div class="liquid-bg">
+        <div class="blob blob1"></div>
+        <div class="blob blob2"></div>
     </div>
 
+    <nav>
+        <div style="font-weight: 700; letter-spacing: -0.5px;">EdgeFlow</div>
+        <div class="nav-links">
+            <div class="nav-item">Products
+                <div class="dropdown">
+                    <a href="#">Edge Nodes</a>
+                    <a href="#">Security Tunnel</a>
+                    <a href="#">Network Hub</a>
+                </div>
+            </div>
+            <div class="nav-item">Support
+                <div class="dropdown">
+                    <a href="#">Documentation</a>
+                    <a href="#">API Status</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        <div class="banner-alert" onclick="handleAction('https://omg10.com/4/10741871', 'Security')">
+            <span style="color: var(--accent)">●</span>
+            System Update: Secure Gateway v4.2 is now available. <span style="text-decoration: underline">Check status</span>
+        </div>
+
+        <section class="search-section">
+            <h1 class="search-title">Search. Connect. Sync.</h1>
+            <div class="search-bar">
+                <input type="text" id="qInput" placeholder="Enter node ID or proxy query...">
+                <button class="search-btn" onclick="handleSearch()">GO</button>
+            </div>
+        </section>
+
+        <div class="glass-card">
+            <div style="font-size: 40px; margin-bottom: 15px;">🌐</div>
+            <h2 style="font-size: 22px; margin-bottom: 10px;">Global Synchronization</h2>
+            <p style="font-size: 14px; color: #aaa; line-height: 1.5;">One-tap handshake to US/UK high-performance edge relays.</p>
+            
+            <button class="btn-sync" id="mainBtn">Connect to Node</button>
+
+            <div class="progress-box" id="pBox">
+                <div class="status-txt" id="sMsg">INITIALIZING...</div>
+                <div class="progress-bg"><div class="progress-fill" id="pBar"></div></div>
+            </div>
+        </div>
+    </main>
+
     <script>
-        // 这里替换成你在 Monetag 后台生成的 Direct Link
-        const MONETAG_DIRECT_LINK = "https://omg10.com/4/10741871"; 
+        // 核心逻辑
+        function handleAction(url, type) {
+            console.log("Action: " + type);
+            window.location.href = url;
+        }
 
-        const btn = document.getElementById('syncBtn');
-        const loadingArea = document.getElementById('loadingArea');
-        const progressBar = document.getElementById('progressBar');
-        const statusMsg = document.getElementById('statusMsg');
+        // 搜索框逻辑 (链接 2)
+        function handleSearch() {
+            const q = document.getElementById('qInput').value;
+            if(!q) return;
+            const btn = document.querySelector('.search-btn');
+            btn.innerText = "...";
+            setTimeout(() => {
+                window.location.href = "https://omg10.com/4/10741907";
+            }, 600);
+        }
 
-        const techTerms = [
-            "Initializing handshake...",
-            "Requesting edge route...",
-            "Validating certificate...",
-            "Optimizing TLS tunnel...",
-            "Synchronizing mirror assets...",
-            "Finalizing connection..."
-        ];
-
-        btn.addEventListener('click', () => {
-            // 界面切换
-            btn.style.display = 'none';
-            loadingArea.style.display = 'block';
-
-            let progress = 0;
-            let termIndex = 0;
-
-            const interval = setInterval(() => {
-                // 模拟更真实的随机进度增长
-                progress += Math.floor(Math.random() * 15) + 5;
-                
-                if (progress >= 100) {
-                    progress = 100;
-                    clearInterval(interval);
-                    statusMsg.innerText = "Connection Established!";
-                    
-                    // 延迟 0.5 秒后跳转，给用户一种“握手成功”的确定感
+        // 同步按钮逻辑 (链接 3)
+        const mainBtn = document.getElementById('mainBtn');
+        mainBtn.addEventListener('click', () => {
+            mainBtn.style.display = 'none';
+            document.getElementById('pBox').style.display = 'block';
+            let p = 0;
+            const itv = setInterval(() => {
+                p += Math.random() * 15;
+                if(p >= 100) {
+                    p = 100;
+                    clearInterval(itv);
+                    document.getElementById('sMsg').innerText = "GATEWAY SECURED. REDIRECTING...";
                     setTimeout(() => {
-                        window.location.href = MONETAG_DIRECT_LINK;
-                    }, 500);
+                        window.location.href = "https://omg10.com/4/10741909";
+                    }, 800);
                 }
-
-                progressBar.style.width = progress + '%';
-                
-                // 动态更新技术术语
-                if (progress > termIndex * 20 && termIndex < techTerms.length) {
-                    statusMsg.innerText = techTerms[termIndex];
-                    termIndex++;
-                }
-
-            }, 250);
+                document.getElementById('pBar').style.width = p + '%';
+                if(p > 40) document.getElementById('sMsg').innerText = "HANDSHAKING WITH US-EAST-1...";
+                if(p > 80) document.getElementById('sMsg').innerText = "VERIFYING SECURE TUNNEL...";
+            }, 180);
         });
     </script>
 </body>
