@@ -2,143 +2,103 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="Delegate-CH" content="Sec-CH-UA https://s.pemsrv.com; Sec-CH-UA-Mobile https://s.pemsrv.com; Sec-CH-UA-Arch https://s.pemsrv.com; Sec-CH-UA-Model https://s.pemsrv.com; Sec-CH-UA-Platform https://s.pemsrv.com; Sec-CH-UA-Platform-Version https://s.pemsrv.com; Sec-CH-UA-Bitness https://s.pemsrv.com; Sec-CH-UA-Full-Version-List https://s.pemsrv.com; Sec-CH-UA-Full-version https://s.pemsrv.com;">
+    <meta name="monetag" content="2ee04f0e5821abb2369342f4655af22a">
+    
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EdgeSync | Secure Node Handshake</title>
+    <title>EdgeSync | Network Handshake</title>
     <style>
-        :root { --p-blue: #007AFF; --bg: #050505; --card: #121212; --text: #f5f5f7; }
-        body, html { margin: 0; background: var(--bg); color: var(--text); font-family: -apple-system, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+        :root { --p-blue: #007AFF; --bg: #050505; --card: #1c1c1e; --text: #f5f5f7; }
+        body, html { height: 100%; margin: 0; background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; display: flex; justify-content: center; align-items: center; -webkit-font-smoothing: antialiased; }
         
-        /* 导航栏：增加专业感 */
-        .nav-bar { width: 100%; padding: 15px 0; background: rgba(0,0,0,0.8); border-bottom: 1px solid #222; text-align: center; font-size: 12px; letter-spacing: 1px; color: #86868b; }
+        .container { text-align: center; width: 90%; max-width: 380px; padding: 40px 24px; background: var(--card); border-radius: 28px; border: 1px solid #333; box-shadow: 0 20px 40px rgba(0,0,0,0.6); }
+        .icon-box { width: 64px; height: 64px; background: rgba(0,122,255,0.15); border-radius: 18px; display: flex; align-items: center; justify-content: center; margin: 0 auto 24px; border: 1px solid rgba(0,122,255,0.3); }
+        
+        h1 { font-size: 24px; font-weight: 600; margin: 0 0 12px 0; letter-spacing: -0.02em; }
+        p { color: #8e8e93; font-size: 15px; line-height: 1.4; margin-bottom: 32px; }
+        
+        .btn-main { background: var(--p-blue); color: #fff; padding: 16px; border-radius: 14px; font-size: 17px; font-weight: 600; width: 100%; border: none; cursor: pointer; transition: all 0.2s ease; outline: none; -webkit-tap-highlight-color: transparent; }
+        .btn-main:active { transform: scale(0.97); background: #0062cc; }
 
-        .main-wrapper { display: flex; flex-direction: column; align-items: center; padding: 40px 20px; }
-
-        /* 你原本的 Container 样式 */
-        .container { text-align: center; width: 100%; max-width: 360px; padding: 48px 24px; background: var(--card); border-radius: 32px; border: 1px solid #222; box-shadow: 0 30px 60px rgba(0,0,0,0.8); margin-bottom: 40px; }
-        .shield-icon { width: 56px; height: 56px; background: rgba(0,122,255,0.1); border-radius: 16px; display: flex; align-items: center; justify-content: center; margin: 0 auto 24px; border: 1px solid rgba(0,122,255,0.2); }
-        h1 { font-size: 22px; font-weight: 600; margin: 0 0 10px 0; letter-spacing: -0.5px; }
-        .hero-desc { color: #86868b; font-size: 14px; line-height: 1.5; margin-bottom: 32px; font-weight: 400; }
-        .btn-main { background: var(--p-blue); color: #fff; padding: 18px; border-radius: 14px; font-size: 16px; font-weight: 600; width: 100%; border: none; cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 8px 20px rgba(0, 122, 255, 0.25); outline: none; }
-        .btn-main:active { transform: scale(0.96); opacity: 0.9; }
-        .prog-area { display: none; margin-top: 32px; text-align: left; }
-        .bar-outer { width: 100%; height: 4px; background: #222; border-radius: 10px; overflow: hidden; margin-top: 10px; }
-        .bar-inner { width: 0%; height: 100%; background: var(--p-blue); transition: width 0.2s ease; }
-        .status-msg { font-size: 11px; color: #424245; text-transform: uppercase; letter-spacing: 1.2px; font-weight: 600; }
-
-        /* 专门为 Marius 准备的内容填充区 */
-        .info-content { max-width: 600px; width: 100%; color: #86868b; line-height: 1.6; font-size: 14px; }
-        .info-content h2 { color: #fff; font-size: 18px; margin-top: 30px; border-bottom: 1px solid #333; padding-bottom: 8px; }
-        .tech-box { background: #1c1c1e; padding: 15px; border-radius: 12px; margin: 15px 0; border: 1px solid #222; }
-        footer { margin-top: 60px; color: #424245; font-size: 12px; }
+        .loading-area { display: none; margin-top: 30px; }
+        .status-text { font-size: 12px; color: var(--p-blue); font-weight: 500; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; text-align: left; }
+        .progress-track { width: 100%; height: 6px; background: #333; border-radius: 3px; overflow: hidden; }
+        .progress-bar { width: 0%; height: 100%; background: var(--p-blue); transition: width 0.3s cubic-bezier(0.1, 0.5, 0.5, 1); }
+        
+        .footer-tag { margin-top: 24px; font-size: 11px; color: #444; letter-spacing: 0.5px; }
     </style>
 </head>
 <body>
 
-    <div class="nav-bar">EDGESYNC GLOBAL RELAY SYSTEM v4.0.1</div>
+    <div class="container">
+        <div class="icon-box">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#007AFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+        </div>
+        <h1>Synchronize Node</h1>
+        <p>Establish a secure tunnel to the closest high-speed edge relay for optimized data throughput.</p>
+        
+        <button class="btn-main" id="syncBtn">Connect to Edge Node</button>
 
-    <div class="main-wrapper">
-        <div class="container">
-            <div class="shield-icon">
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#007AFF" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-            </div>
-            <h1>Security Check</h1>
-            <p class="hero-desc">Synchronize your session with the high-speed edge node to access the mirror assets.</p>
-            
-            <button class="btn-main" id="triggerBtn">Connect & Synchronize</button>
-     
-            <div class="prog-area" id="pBox">
-                <div class="status-msg" id="pText">Initializing...</div>
-                <div class="bar-outer"><div class="bar-inner" id="pBar"></div></div>
+        <div class="loading-area" id="loadingArea">
+            <div class="status-text" id="statusMsg">Initializing...</div>
+            <div class="progress-track">
+                <div class="progress-bar" id="progressBar"></div>
             </div>
         </div>
-
-        <div class="info-content">
-            <h2>Network Infrastructure</h2>
-            <p>EdgeSync provides a decentralized relay gateway for secure data distribution. Our infrastructure spans 40+ global PoPs, utilizing <b>Anycast BGP</b> to route requests to the nearest available cluster.</p>
-            
-            <div class="tech-box">
-                <strong>Current Cluster:</strong> US-EAST-VIRGINIA (Mirror 04)<br>
-                <strong>Encryption:</strong> AES-256-GCM / TLS 1.3<br>
-                <strong>System Status:</strong> <span style="color:#4cd964">Operational</span>
-            </div>
-
-            <h2>How it works</h2>
-            <p>To access high-bandwidth mirror assets, a localized session handshake is required. This process verifies your regional entry point and allocates a temporary port for data synchronization.</p>
-            
-            <h2>FAQ & Support</h2>
-            <p><b>Q: What happens after synchronization?</b><br>
-            A: Once the handshake is successful, your session ID is whitelisted on our edge firewall for 60 minutes, allowing seamless access to the requested content relay nodes.</p>
-        </div>
-
-        <footer>&copy; 2026 EdgeSync Systems LLC. All rights reserved.</footer>
+        
+        <div class="footer-tag">SECURE HANDSHAKE v4.2 // MAIN-NET</div>
     </div>
- 
-    <script type="application/javascript">
-    (function() {
-        // --- 1. 配置参数 ---
-        var adConfig = {
-            "ads_host": "a.pemsrv.com",
-            "syndication_host": "s.pemsrv.com",
-            "idzone": 5873154,
-            "popup_fallback": true,
-            "popup_force": true,
-            "chrome_enabled": true,
-            "new_tab": true,
-            "frequency_period": 0,
-            "frequency_count": 999,
-            "trigger_method": 1,
-            "trigger_class": "btn-main",
-            "capping_enabled": false
-        };
- 
-        let isAdShown = false;
-        document.addEventListener('creativeDisplayed-5873154', function(e) {
-            isAdShown = true;
-        }, false);
- 
-        // --- 2. popMagic 核心核心逻辑 (请确保此部分完整) ---
-        var popMagic={version:8,cookie_name:"",url:"",config:{},open_count:0,top:null,browser:null,venor_loaded:!1,venor:!1,tcfData:null,remoteLicensedDomains:["exdynsrv.com","exosrv.com","exoclick.com","opoxv.com","exacdn.com","pemsrv.com"],configTpl:{ads_host:"",syndication_host:"",idzone:"",frequency_period:720,frequency_count:1,trigger_method:1,trigger_class:"",popup_force:!1,popup_fallback:!1,chrome_enabled:!0,new_tab:!1,cat:"",tags:"",el:"",sub:"",sub2:"",sub3:"",only_inline:!1,trigger_delay:0,capping_enabled:!0,tcf_enabled:!1,cookieconsent:!0,should_fire:function(){return!0},on_redirect:null},isAdsDomainLicensed:function(){for(var e=this.config.ads_host,o=this.remoteLicensedDomains.concat([".local","localhost","127.0.0.1"]),t=0;t<o.length;t++){var i=o[t];if("string"==typeof i)if("."===i.charAt(0)){var n=i,r=i.substring(1);if(e.slice(-n.length)===n||e===r)return!0}else{var a=e===i,c="."+i,p=e.slice(-c.length)===c;if(a||p)return!0}}return!1},init:function(e){if(void 0!==e.idzone&&e.idzone){void 0===e.customTargeting&&(e.customTargeting=[]),window.customTargeting=e.customTargeting||null;var o=Object.keys(e.customTargeting).filter(function(e){return e.search("ex_")>=0});for(var t in o.length&&o.forEach(function(e){return this.configTpl[e]=null}.bind(this)),this.configTpl)Object.prototype.hasOwnProperty.call(this.configTpl,t)&&(void 0!==e[t]?this.config[t]=e[t]:this.config[t]=this.configTpl[t]);if(void 0!==this.config.idzone&&""!==this.config.idzone){!0!==this.config.only_inline&&this.isAdsDomainLicensed()&&this.loadHosted();var i=this;this.checkTCFConsent(function(){"complete"===document.readyState?i.preparePopWait():i.addEventToElement(window,"load",i.preparePop)})}}},getCountFromCookie:function(){if(!this.config.cookieconsent)return 0;var e=popMagic.getCookie(popMagic.cookie_name),o=void 0===e?0:parseInt(e);return isNaN(o)&&(o=0),o},getLastOpenedTimeFromCookie:function(){var e=popMagic.getCookie(popMagic.cookie_name),o=null;if(void 0!==e){var t=e.split(";")[1];o=t>0?parseInt(t):0}return isNaN(o)&&(o=null),o},shouldShow:function(e){if(e=e||!1,!popMagic.config.capping_enabled)return 0===popMagic.open_count;if(popMagic.open_count>=popMagic.config.frequency_count)return!1;var i=popMagic.getCountFromCookie(),n=popMagic.getLastOpenedTimeFromCookie(),r=Math.floor(Date.now()/1e3),a=n+popMagic.config.trigger_delay;return!(n&&a>r)&&(popMagic.open_count=i,!(i>=popMagic.config.frequency_count))},venorShouldShow:function(){return popMagic.venor_loaded&&"0"===popMagic.venor},setAsOpened:function(e){var o=e?e.target||e.srcElement:null;var i=new CustomEvent("creativeDisplayed-"+popMagic.config.idzone,{detail:{elm:o}});document.dispatchEvent(i);if(popMagic.config.capping_enabled){var n=popMagic.getCountFromCookie()+1;var r=Math.floor(Date.now()/1e3);popMagic.setCookie(popMagic.cookie_name,n+";"+r,popMagic.config.frequency_period)}else++popMagic.open_count},loadHosted:function(){var e=document.createElement("script");for(var o in e.type="application/javascript",e.async=!0,e.src="//"+this.config.ads_host+"/popunder1000.js",e.id="popmagicldr",this.config)Object.prototype.hasOwnProperty.call(this.config,o)&&"ads_host"!==o&&"syndication_host"!==o&&e.setAttribute("data-exo-"+o,this.config[o]);var t=document.getElementsByTagName("body").item(0);t.firstChild?t.insertBefore(e,t.firstChild):t.appendChild(e)},preparePopWait:function(){setTimeout(popMagic.preparePop,400)},preparePop:function(){if("object"!=typeof exoJsPop101||!Object.prototype.hasOwnProperty.call(exoJsPop101,"add")){popMagic.top=self;if(popMagic.top!==self)try{top.document.location.toString()&&(popMagic.top=top)}catch(e){}popMagic.cookie_name="zone-cap-"+popMagic.config.idzone;if(popMagic.shouldShow(!0)){var e=new XMLHttpRequest;e.onreadystatechange=function(){e.readyState==XMLHttpRequest.DONE&&(popMagic.venor_loaded=!0,200==e.status?popMagic.venor=e.responseText:popMagic.venor="0")};var o="https:"!==document.location.protocol&&"http:"!==document.location.protocol?"https:":document.location.protocol;e.open("GET",o+"//"+popMagic.config.syndication_host+"/venor.php",!0);try{e.send()}catch(e){popMagic.venor_loaded=!0}}popMagic.buildUrl();popMagic.browser=popMagic.browserDetector.getBrowserInfo();if(popMagic.config.chrome_enabled||!popMagic.browser.isChrome){var t=popMagic.getPopMethod(popMagic.browser);popMagic.addEvent("click",t)}}},getPopMethod:function(e){return popMagic.config.popup_force||popMagic.config.popup_fallback&&e.isChrome&&e.version>=68&&!e.isMobile?popMagic.methods.popup:e.isMobile?popMagic.methods.default:e.isChrome?popMagic.methods.chromeTab:popMagic.methods.default},checkTCFConsent:function(e){if(this.config.tcf_enabled&&"function"==typeof window.__tcfapi){var o=this;window.__tcfapi("addEventListener",2,function(t,i){if(i){o.tcfData=t;if(t.eventStatus==="tcloaded"||t.eventStatus==="useractioncomplete"){window.__tcfapi("removeEventListener",2,function(){},t.listenerId);e()}}})}else e()},buildUrl:function(){var o="https:"!==document.location.protocol&&"http:"!==document.location.protocol?"https:":document.location.protocol,t=top===self?document.URL:document.referrer;var r=this.tcfData&&this.tcfData.gdprApplies?1:0,a=popMagic.getCookie("__suvt");this.url=o+"//"+this.config.syndication_host+"/v1/link.php?idzone="+this.config.idzone+"&type=8&p="+encodeURIComponent(t)+"&block=1&cb="+Math.floor(1e9*Math.random())+(a?"&suvt="+a:"")},addEventToElement:function(e,o,t){e.addEventListener?e.addEventListener(o,t,!1):e.attachEvent?e.attachEvent("on"+o,t):e["on"+o]=t},addEvent:function(e,o){var btn=document.getElementById('triggerBtn');this.addEventToElement(btn,e,o)},setCookie:function(e,o,t){var i=new Date;i.setMinutes(i.getMinutes()+parseInt(t));document.cookie=e+"="+encodeURIComponent(o)+"; expires="+i.toUTCString()+"; path=/";},getCookie:function(e){var n=document.cookie.split(";");for(var o=0;o<n.length;o++){var t=n[o].split("=");if(t[0].trim()===e)return decodeURIComponent(t[1])}return!1},browserDetector:{isChromeOrChromium:function(){return!0},getBrowserInfo:function(){return{name:"chrome",version:"110",isChrome:!0,isMobile:!1}}},methods:{popup:function(e){if(!popMagic.shouldShow()||!popMagic.isValidUserEvent(e))return!0;var i=document.location.href,n=window.open(i,popMagic.getPuId(),"menubar=1,resizable=1,width=1000,height=800");popMagic.setAsOpened(e);setTimeout(function(){n.location.href=popMagic.url},200);if(e.preventDefault){e.preventDefault();e.stopPropagation()}},isValidUserEvent:function(e){return!!e}}};
- 
-        popMagic.init(adConfig);
- 
-        // --- 3. UI 逻辑 ---
-        const btn = document.getElementById('triggerBtn');
-        const pBox = document.getElementById('pBox');
-        const pBar = document.getElementById('pBar');
-        const pText = document.getElementById('pText');
- 
-        btn.addEventListener('click', function() {
-            isAdShown = false;
-            btn.style.pointerEvents = 'none';
-            btn.style.opacity = '0.4';
-            btn.innerText = "Synchronizing...";
-            pBox.style.display = 'block';
- 
+
+    <script>
+        // 这里替换成你在 Monetag 后台生成的 Direct Link
+        const MONETAG_DIRECT_LINK = "https://你的Monetag链接"; 
+
+        const btn = document.getElementById('syncBtn');
+        const loadingArea = document.getElementById('loadingArea');
+        const progressBar = document.getElementById('progressBar');
+        const statusMsg = document.getElementById('statusMsg');
+
+        const techTerms = [
+            "Initializing handshake...",
+            "Requesting edge route...",
+            "Validating certificate...",
+            "Optimizing TLS tunnel...",
+            "Synchronizing mirror assets...",
+            "Finalizing connection..."
+        ];
+
+        btn.addEventListener('click', () => {
+            // 界面切换
+            btn.style.display = 'none';
+            loadingArea.style.display = 'block';
+
             let progress = 0;
-            const timer = setInterval(() => {
-                progress += Math.floor(Math.random() * 12) + 2;
+            let termIndex = 0;
+
+            const interval = setInterval(() => {
+                // 模拟更真实的随机进度增长
+                progress += Math.floor(Math.random() * 15) + 5;
+                
                 if (progress >= 100) {
                     progress = 100;
-                    clearInterval(timer);
+                    clearInterval(interval);
+                    statusMsg.innerText = "Connection Established!";
                     
+                    // 延迟 0.5 秒后跳转，给用户一种“握手成功”的确定感
                     setTimeout(() => {
-                        const msg = isAdShown ? "Secure Handshake Successful. Mirror Node Active." : "Session Active. Redirecting to assets...";
-                        alert(msg);
-                        
-                        btn.style.pointerEvents = 'auto';
-                        btn.style.opacity = '1';
-                        btn.innerText = "Reconnect Mirror Node";
-                        pBar.style.width = '0%';
-                        pText.innerText = "READY";
+                        window.location.href = MONETAG_DIRECT_LINK;
                     }, 500);
                 }
-                pBar.style.width = progress + '%';
-                if(progress > 40) pText.innerText = "Verifying Handshake...";
-                if(progress > 80) pText.innerText = "Finalizing Protocol...";
-            }, 120);
+
+                progressBar.style.width = progress + '%';
+                
+                // 动态更新技术术语
+                if (progress > termIndex * 20 && termIndex < techTerms.length) {
+                    statusMsg.innerText = techTerms[termIndex];
+                    termIndex++;
+                }
+
+            }, 250);
         });
-    })();
     </script>
 </body>
 </html>
